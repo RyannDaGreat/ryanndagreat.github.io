@@ -1,4 +1,3 @@
-# zharnite.github.io
-personal website.
+Ryan Burgert's Personal Website
 
-https://zharnite.github.io/
+Modified from Zhen's personal website, at zharnite.github.io
