@@ -44,6 +44,32 @@
   50% {
     border-image-source: linear-gradient(
       to right,
+      #fcf434,
+      #fcf434 25%,
+      #ffffff 25%,
+      #ffffff 50%,
+      #9c59d1 50%,
+      #9c59d1 75%,
+      #2c2c2c 75%,
+      #2c2c2c
+    );
+  }
+  80% {
+    border-image-source: linear-gradient(
+      to right,
+      #fcf434,
+      #fcf434 25%,
+      #ffffff 25%,
+      #ffffff 50%,
+      #9c59d1 50%,
+      #9c59d1 75%,
+      #2c2c2c 75%,
+      #8a0253
+    );
+  }
+  90% {
+    border-image-source: linear-gradient(
+      to right,
       #5BCEFA,
       #5BCEFA 20%,
       #F5A9B8 20%,
@@ -131,22 +157,31 @@ h1 {
   border-bottom: 1rem solid;
   border-image-slice: 1;
   border-image-source: linear-gradient(
-    to right,
-    #d62e00,
-    #d62e00 20%,
-    #ff9a56 20%,
-    #ff9a56 40%,
-    #ffffff 40%,
-    #ffffff 60%,
-    #d362a4 60%,
-    #d362a4 80%,
-    #8a0253 80%,
-    #8a0253
+    /* to right,
+    #fcf434 0%,
+    #fcf434 25%,
+    #ffffff 25%,
+    #ffffff 50%,
+    #9c59d1 50%,
+    #9c59d1 75%,
+    #2c2c2c 75%,
+    #2c2c2c 100%, */
+
+
+    /* to right,
+    #fcf434,
+    #fcf434 25%,
+    #ffffff 25%,
+    #ffffff 50%,
+    #9c59d1 50%,
+    #9c59d1 75%,
+    #2c2c2c 75%,
+    #8a0253 */
   );
 
 
   animation-name: backgroundColorPalette;
-  animation-duration: 30s;
+  animation-duration: 40s;
   animation-iteration-count: infinite;
-  animation-direction: alternate;
+  animation-direction:alternate;
 }
