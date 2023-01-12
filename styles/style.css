@@ -45,26 +45,34 @@
     border-image-source: linear-gradient(
       to right,
       #fcf434,
-      #fcf434 25%,
-      #ffffff 25%,
-      #ffffff 50%,
-      #9c59d1 50%,
-      #9c59d1 75%,
-      #2c2c2c 75%,
+      #fcf434 20%,
+      #ffffff 20%,
+      #ffffff 60%,
+      #9c59d1 60%,
+      #9c59d1 80%,
+      #2c2c2c 80%,
       #2c2c2c
     );
   }
   80% {
     border-image-source: linear-gradient(
       to right,
-      #fcf434,
+      /* #fcf434,
       #fcf434 25%,
       #ffffff 25%,
       #ffffff 50%,
       #9c59d1 50%,
       #9c59d1 75%,
       #2c2c2c 75%,
-      #8a0253
+      #8a0253 */
+      #fcf434,
+      #fcf434 20%,
+      #ffffff 20%,
+      #ffffff 60%,
+      #9c59d1 60%,
+      #9c59d1 80%,
+      #2c2c2c 80%,
+      #2c2c2c
     );
   }
   90% {
