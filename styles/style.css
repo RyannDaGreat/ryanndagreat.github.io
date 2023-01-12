@@ -12,19 +12,64 @@
 
 @keyframes backgroundColorPalette {
   0% {
-    background: #ee6055;
+    border-image-source: linear-gradient(
+      to right,
+      #d62e00,
+      #d62e00 20%,
+      #ff9a56 20%,
+      #ff9a56 40%,
+      #ffffff 40%,
+      #ffffff 60%,
+      #d362a4 60%,
+      #d362a4 80%,
+      #8a0253 80%,
+      #8a0253
+    );
   }
   25% {
-    background: #60d394;
+    border-image-source: linear-gradient(
+      to right,
+      #d62e00,
+      #d62e00 20%,
+      #ff9a56 20%,
+      #ff9a56 40%,
+      #ffffff 40%,
+      #ffffff 60%,
+      #d362a4 60%,
+      #d362a4 80%,
+      #8a0253 80%,
+      #8a0253
+    );
   }
   50% {
-    background: #aaf683;
-  }
-  75% {
-    background: #ffd97d;
+    border-image-source: linear-gradient(
+      to right,
+      #5BCEFA,
+      #5BCEFA 20%,
+      #F5A9B8 20%,
+      #F5A9B8 40%,
+      #FFFFFF 40%,
+      #FFFFFF 60%,
+      #F5A9B8 60%,
+      #F5A9B8 80%,
+      #5BCEFA 80%,
+      #5BCEFA
+    );
   }
   100% {
-    background: #ff9b85;
+    border-image-source: linear-gradient(
+      to right,
+      #5BCEFA,
+      #5BCEFA 20%,
+      #F5A9B8 20%,
+      #F5A9B8 40%,
+      #FFFFFF 40%,
+      #FFFFFF 60%,
+      #F5A9B8 60%,
+      #F5A9B8 80%,
+      #5BCEFA 80%,
+      #5BCEFA
+    );
   }
 }
 
@@ -37,11 +82,6 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-
-  animation-name: backgroundColorPalette;
-  animation-duration: 10s;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
 
 }
 
@@ -92,15 +132,21 @@ h1 {
   border-image-slice: 1;
   border-image-source: linear-gradient(
     to right,
-    var(--color-1),
-    var(--color-1) 20%,
-    var(--color-2) 20%,
-    var(--color-2) 40%,
-    var(--color-3) 40%,
-    var(--color-3) 60%,
-    var(--color-4) 60%,
-    var(--color-4) 80%,
-    var(--color-5) 80%,
-    var(--color-5)
+    #d62e00,
+    #d62e00 20%,
+    #ff9a56 20%,
+    #ff9a56 40%,
+    #ffffff 40%,
+    #ffffff 60%,
+    #d362a4 60%,
+    #d362a4 80%,
+    #8a0253 80%,
+    #8a0253
   );
+
+
+  animation-name: backgroundColorPalette;
+  animation-duration: 30s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
