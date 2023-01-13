@@ -1,174 +1,143 @@
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 :root {
-  /* Colors */
-  --color-1: #d62e00;
-  --color-2: #ff9a56;
-  --color-3: #ffffff;
-  --color-4: #d362a4;
-  --color-5: #8a0253;
-  --light-color: #ccc;
+  /* Define colors */
+  --lesbian-1: #d62e00;
+  --lesbian-2: #ff9a56;
+  --lesbian-3: #ffffff;
+  --lesbian-4: #d362a4;
+  --lesbian-5: #8a0253;
+
+  --nonbinary-1: #fcf434;
+  --nonbinary-2: #ffffff;
+  --nonbinary-3: #9c59d1;
+  --nonbinary-4: #2c2c2c;
+
+  --trans-1: #5BCEFA;
+  --trans-2: #F5A9B8;
+  --trans-3: #FFFFFF;
+  --trans-4: #F5A9B8;
+  --trans-5: #5BCEFA;
+
+  --light-color: #ccc
 }
 
-@keyframes backgroundColorPalette {
+/* animation for background color change */
+@keyframes flag {
   0% {
-    border-image-source: linear-gradient(
-      to right,
-      #d62e00,
-      #d62e00 20%,
-      #ff9a56 20%,
-      #ff9a56 40%,
-      #ffffff 40%,
-      #ffffff 60%,
-      #d362a4 60%,
-      #d362a4 80%,
-      #8a0253 80%,
-      #8a0253
-    );
+    border-image-source: linear-gradient(to right,
+        var(--lesbian-1), var(--lesbian-1) 20%,
+        var(--lesbian-2) 20%, var(--lesbian-2) 40%,
+        var(--lesbian-3) 40%, var(--lesbian-3) 60%,
+        var(--lesbian-4) 60%, var(--lesbian-4) 80%,
+        var(--lesbian-5) 80%, var(--lesbian-5));
   }
+
   23% {
-    border-image-source: linear-gradient(
-      to right,
-      #d62e00,
-      #d62e00 20%,
-      #ff9a56 20%,
-      #ff9a56 40%,
-      #ffffff 40%,
-      #ffffff 60%,
-      #d362a4 60%,
-      #d362a4 80%,
-      #8a0253 80%,
-      #8a0253
-    );
+    border-image-source: linear-gradient(to right,
+        var(--lesbian-1), var(--lesbian-1) 20%,
+        var(--lesbian-2) 20%, var(--lesbian-2) 40%,
+        var(--lesbian-3) 40%, var(--lesbian-3) 60%,
+        var(--lesbian-4) 60%, var(--lesbian-4) 80%,
+        var(--lesbian-5) 80%, var(--lesbian-5));
   }
+
   33% {
-    border-image-source: linear-gradient(
-      to right,
-      #fcf434,
-      #fcf434 20%,
-      #ffffff 20%,
-      #ffffff 60%,
-      #9c59d1 60%,
-      #9c59d1 80%,
-      #2c2c2c 80%,
-      #2c2c2c
-    );
+    border-image-source: linear-gradient(to right,
+        var(--nonbinary-1), var(--nonbinary-1) 20%,
+        var(--nonbinary-2) 20%, var(--nonbinary-2) 60%,
+        var(--nonbinary-3) 60%, var(--nonbinary-3) 80%,
+        var(--nonbinary-4) 80%, var(--nonbinary-4));
   }
+
   56% {
-    border-image-source: linear-gradient(
-      to right,
-      /* #fcf434,
-      #fcf434 25%,
-      #ffffff 25%,
-      #ffffff 50%,
-      #9c59d1 50%,
-      #9c59d1 75%,
-      #2c2c2c 75%,
-      #8a0253 */
-      #fcf434,
-      #fcf434 20%,
-      #ffffff 20%,
-      #ffffff 60%,
-      #9c59d1 60%,
-      #9c59d1 80%,
-      #2c2c2c 80%,
-      #2c2c2c
-    );
+    border-image-source: linear-gradient(to right,
+        var(--nonbinary-1), var(--nonbinary-1) 20%,
+        var(--nonbinary-2) 20%, var(--nonbinary-2) 60%,
+        var(--nonbinary-3) 60%, var(--nonbinary-3) 80%,
+        var(--nonbinary-4) 80%, var(--nonbinary-4));
   }
+
   66% {
-    border-image-source: linear-gradient(
-      to right,
-      #5BCEFA,
-      #5BCEFA 20%,
-      #F5A9B8 20%,
-      #F5A9B8 40%,
-      #FFFFFF 40%,
-      #FFFFFF 60%,
-      #F5A9B8 60%,
-      #F5A9B8 80%,
-      #5BCEFA 80%,
-      #5BCEFA
-    );
+    border-image-source: linear-gradient(to right,
+        var(--trans-1), var(--trans-1) 20%,
+        var(--trans-2) 20%, var(--trans-2) 40%,
+        var(--trans-3) 40%, var(--trans-3) 60%,
+        var(--trans-4) 60%, var(--trans-4) 80%,
+        var(--trans-5) 80%, var(--trans-5));
   }
+
   90% {
-    border-image-source: linear-gradient(
-      to right,
-      #5BCEFA,
-      #5BCEFA 20%,
-      #F5A9B8 20%,
-      #F5A9B8 40%,
-      #FFFFFF 40%,
-      #FFFFFF 60%,
-      #F5A9B8 60%,
-      #F5A9B8 80%,
-      #5BCEFA 80%,
-      #5BCEFA
-    );
+    border-image-source: linear-gradient(to right,
+        var(--trans-1), var(--trans-1) 20%,
+        var(--trans-2) 20%, var(--trans-2) 40%,
+        var(--trans-3) 40%, var(--trans-3) 60%,
+        var(--trans-4) 60%, var(--trans-4) 80%,
+        var(--trans-5) 80%, var(--trans-5));
   }
+
   100% {
-    border-image-source: linear-gradient(
-      to right,
-      #d62e00,
-      #d62e00 20%,
-      #ff9a56 20%,
-      #ff9a56 40%,
-      #ffffff 40%,
-      #ffffff 60%,
-      #d362a4 60%,
-      #d362a4 80%,
-      #8a0253 80%,
-      #8a0253
-    );
+    border-image-source: linear-gradient(to right,
+        var(--lesbian-1), var(--lesbian-1) 20%,
+        var(--lesbian-2) 20%, var(--lesbian-2) 40%,
+        var(--lesbian-3) 40%, var(--lesbian-3) 60%,
+        var(--lesbian-4) 60%, var(--lesbian-4) 80%,
+        var(--lesbian-5) 80%, var(--lesbian-5));
   }
 }
 
 * {
   box-sizing: border-box;
+  /* makes element size include padding and borders */
 }
+
 html,
 body {
   font-family: 'Share Tech Mono', monospace;
+  /* apply font to whole document */
   margin: 0;
+  /* remove default margin */
   padding: 0;
+  /* remove default padding */
   height: 100%;
-
-}
-
-body {
-  font-family: 'Share Tech Mono', monospace;
+  /* make html and body full height */
 }
 
 h1 {
   font-size: 5rem;
+  /* increase font size */
 }
 
 #content-row {
   margin-top: 35vh;
+  /* move content down */
 }
 
 #main-wrapper {
   display: flex;
+  /* enable flexbox layout */
   flex-direction: column;
+  /* set direction to vertical */
   min-height: 100%;
+  /* make wrapper take up full height */
 }
 
 #main-content {
   flex: 1;
 }
 
-
-
 #main-footer {
   margin-top: 0rem;
 }
+
 #main-footer p {
   color: var(--light-color);
 }
+
 #main-footer a {
   text-decoration: none;
   color: inherit;
 }
-
 
 #name {
   display: inline-block;
@@ -177,34 +146,11 @@ h1 {
   color: black;
 
   /* Underline */
+
   border-bottom: 1rem solid;
   border-image-slice: 1;
-  border-image-source: linear-gradient(
-    /* to right,
-    #fcf434 0%,
-    #fcf434 25%,
-    #ffffff 25%,
-    #ffffff 50%,
-    #9c59d1 50%,
-    #9c59d1 75%,
-    #2c2c2c 75%,
-    #2c2c2c 100%, */
-
-
-    /* to right,
-    #fcf434,
-    #fcf434 25%,
-    #ffffff 25%,
-    #ffffff 50%,
-    #9c59d1 50%,
-    #9c59d1 75%,
-    #2c2c2c 75%,
-    #8a0253 */
-  );
-
-
-  animation-name: backgroundColorPalette;
+  animation-name: flag;
   animation-duration: 40s;
   animation-iteration-count: infinite;
-  animation-direction:normal;
+  animation-direction: normal;
 }
