@@ -26,7 +26,7 @@
       #8a0253
     );
   }
-  25% {
+  23% {
     border-image-source: linear-gradient(
       to right,
       #d62e00,
@@ -41,7 +41,7 @@
       #8a0253
     );
   }
-  50% {
+  33% {
     border-image-source: linear-gradient(
       to right,
       #fcf434,
@@ -54,7 +54,7 @@
       #2c2c2c
     );
   }
-  80% {
+  56% {
     border-image-source: linear-gradient(
       to right,
       /* #fcf434,
@@ -75,6 +75,21 @@
       #2c2c2c
     );
   }
+  66% {
+    border-image-source: linear-gradient(
+      to right,
+      #5BCEFA,
+      #5BCEFA 20%,
+      #F5A9B8 20%,
+      #F5A9B8 40%,
+      #FFFFFF 40%,
+      #FFFFFF 60%,
+      #F5A9B8 60%,
+      #F5A9B8 80%,
+      #5BCEFA 80%,
+      #5BCEFA
+    );
+  }
   90% {
     border-image-source: linear-gradient(
       to right,
@@ -93,16 +108,16 @@
   100% {
     border-image-source: linear-gradient(
       to right,
-      #5BCEFA,
-      #5BCEFA 20%,
-      #F5A9B8 20%,
-      #F5A9B8 40%,
-      #FFFFFF 40%,
-      #FFFFFF 60%,
-      #F5A9B8 60%,
-      #F5A9B8 80%,
-      #5BCEFA 80%,
-      #5BCEFA
+      #d62e00,
+      #d62e00 20%,
+      #ff9a56 20%,
+      #ff9a56 40%,
+      #ffffff 40%,
+      #ffffff 60%,
+      #d362a4 60%,
+      #d362a4 80%,
+      #8a0253 80%,
+      #8a0253
     );
   }
 }
@@ -191,5 +206,5 @@ h1 {
   animation-name: backgroundColorPalette;
   animation-duration: 40s;
   animation-iteration-count: infinite;
-  animation-direction:alternate;
+  animation-direction:normal;
 }
