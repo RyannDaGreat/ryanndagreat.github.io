@@ -24,7 +24,7 @@
 
 /* animation for background color change */
 @keyframes flag {
-  0% {
+  0%, 23%, 100% {
     border-image-source: linear-gradient(to right,
         var(--lesbian-1), var(--lesbian-1) 20%,
         var(--lesbian-2) 20%, var(--lesbian-2) 40%,
@@ -33,16 +33,7 @@
         var(--lesbian-5) 80%, var(--lesbian-5));
   }
 
-  23% {
-    border-image-source: linear-gradient(to right,
-        var(--lesbian-1), var(--lesbian-1) 20%,
-        var(--lesbian-2) 20%, var(--lesbian-2) 40%,
-        var(--lesbian-3) 40%, var(--lesbian-3) 60%,
-        var(--lesbian-4) 60%, var(--lesbian-4) 80%,
-        var(--lesbian-5) 80%, var(--lesbian-5));
-  }
-
-  33% {
+  33%, 56% {
     border-image-source: linear-gradient(to right,
         var(--nonbinary-1), var(--nonbinary-1) 20%,
         var(--nonbinary-2) 20%, var(--nonbinary-2) 60%,
@@ -50,41 +41,16 @@
         var(--nonbinary-4) 80%, var(--nonbinary-4));
   }
 
-  56% {
-    border-image-source: linear-gradient(to right,
-        var(--nonbinary-1), var(--nonbinary-1) 20%,
-        var(--nonbinary-2) 20%, var(--nonbinary-2) 60%,
-        var(--nonbinary-3) 60%, var(--nonbinary-3) 80%,
-        var(--nonbinary-4) 80%, var(--nonbinary-4));
-  }
-
-  66% {
+  66%, 90% {
     border-image-source: linear-gradient(to right,
         var(--trans-1), var(--trans-1) 20%,
         var(--trans-2) 20%, var(--trans-2) 40%,
         var(--trans-3) 40%, var(--trans-3) 60%,
         var(--trans-4) 60%, var(--trans-4) 80%,
         var(--trans-5) 80%, var(--trans-5));
-  }
-
-  90% {
-    border-image-source: linear-gradient(to right,
-        var(--trans-1), var(--trans-1) 20%,
-        var(--trans-2) 20%, var(--trans-2) 40%,
-        var(--trans-3) 40%, var(--trans-3) 60%,
-        var(--trans-4) 60%, var(--trans-4) 80%,
-        var(--trans-5) 80%, var(--trans-5));
-  }
-
-  100% {
-    border-image-source: linear-gradient(to right,
-        var(--lesbian-1), var(--lesbian-1) 20%,
-        var(--lesbian-2) 20%, var(--lesbian-2) 40%,
-        var(--lesbian-3) 40%, var(--lesbian-3) 60%,
-        var(--lesbian-4) 60%, var(--lesbian-4) 80%,
-        var(--lesbian-5) 80%, var(--lesbian-5));
   }
 }
+
 
 * {
   box-sizing: border-box;
@@ -149,8 +115,5 @@ h1 {
 
   border-bottom: 1rem solid;
   border-image-slice: 1;
-  animation-name: flag;
-  animation-duration: 40s;
-  animation-iteration-count: infinite;
-  animation-direction: normal;
+  animation: flag 4s ease-in-out infinite;
 }
