@@ -2,52 +2,24 @@
 
 :root {
   /* Define colors */
-  --lesbian-1: #d62e00;
-  --lesbian-2: #ff9a56;
-  --lesbian-3: #ffffff;
-  --lesbian-4: #d362a4;
-  --lesbian-5: #8a0253;
-
-  --nonbinary-1: #fcf434;
-  --nonbinary-2: #ffffff;
-  --nonbinary-3: #9c59d1;
-  --nonbinary-4: #2c2c2c;
-
-  --trans-1: #5BCEFA;
-  --trans-2: #F5A9B8;
-  --trans-3: #FFFFFF;
-  --trans-4: #F5A9B8;
-  --trans-5: #5BCEFA;
-
-  --light-color: #ccc
+  --lesbian-colors: #d62e00 0% 20%, #ff9a56 20% 40%, #ffffff 40% 60%, #d362a4 60% 80%, #8a0253 80% 100%;
+  --nonbinary-colors: #fcf434 0% 20%, #ffffff 20% 60%, #9c59d1 60% 80%, #2c2c2c 80% 100%;
+  --trans-colors: #5BCEFA 0% 20%, #F5A9B8 20% 40%, #FFFFFF 40% 60%, #F5A9B8 60% 80%, #5BCEFA 80% 100%;
+  --light-color: #ccc;
 }
 
 /* animation for background color change */
 @keyframes flag {
   0%, 23%, 100% {
-    border-image-source: linear-gradient(to right,
-        var(--lesbian-1), var(--lesbian-1) 20%,
-        var(--lesbian-2) 20%, var(--lesbian-2) 40%,
-        var(--lesbian-3) 40%, var(--lesbian-3) 60%,
-        var(--lesbian-4) 60%, var(--lesbian-4) 80%,
-        var(--lesbian-5) 80%, var(--lesbian-5));
+    border-image-source: linear-gradient(to right, var(--lesbian-colors));
   }
 
   33%, 56% {
-    border-image-source: linear-gradient(to right,
-        var(--nonbinary-1), var(--nonbinary-1) 20%,
-        var(--nonbinary-2) 20%, var(--nonbinary-2) 60%,
-        var(--nonbinary-3) 60%, var(--nonbinary-3) 80%,
-        var(--nonbinary-4) 80%, var(--nonbinary-4));
+    border-image-source: linear-gradient(to right, var(--nonbinary-colors));
   }
 
   66%, 90% {
-    border-image-source: linear-gradient(to right,
-        var(--trans-1), var(--trans-1) 20%,
-        var(--trans-2) 20%, var(--trans-2) 40%,
-        var(--trans-3) 40%, var(--trans-3) 60%,
-        var(--trans-4) 60%, var(--trans-4) 80%,
-        var(--trans-5) 80%, var(--trans-5));
+    border-image-source: linear-gradient(to right, var(--trans-colors));
   }
 }
 
