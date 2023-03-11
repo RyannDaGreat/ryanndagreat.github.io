@@ -1,12 +1,16 @@
-Hoi! This is an error page. 
+Hoi! This is an error page.
 
 <script>
     window.onload = () => {
-        currentURL = window.location.href;
-        lowerCaseURL = currentURL.toLowerCase();
-        alert(currentURL)
-        if (currentURL != lowerCaseURL) {
-            location.replace(lowerCaseURL);
-        }
+    currentURL = new URL(window.location.href);
+
+    let redirects = { "diffusion-illusions": "Diffusion-Illusions" };
+    let lowerCasePathname = currentURL.pathname.toLowerCase();
+
+    if (lowerCasePathname in redirects) {
+        currentURL.pathname = redirects[lowerCasePathname];
+        alert("You made a URL typo; redirecting to " + currentURL.pathname);
+        location.replace(currentURL);
+    }
     };
 </script>
