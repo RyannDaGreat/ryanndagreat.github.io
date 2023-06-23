@@ -1,11 +1,22 @@
-Hoi! This is an error page. 404 baby!!!
+Hoi! This is an error page. 404 baby!!! Double check your url. <br><br>
+
+It should be ryanndagreat.github.io, or ryanndagreat.github.io/something_valid<br><br>
+
+Valid links (case sensitive!):<br>
+
+<a href="https://ryanndagreat.github.io">https://ryanndagreat.gitghub.io</a><br>
+<a href="https://ryanndagreat.github.io/LightwaveWebsite">https://ryanndagreat.github.io/LightwaveWebsite</a><br>
+<a href="https://ryanndagreat.github.io/Diffusion-Illusions">https://ryanndagreat.github.io/Diffusion-Illusions</a><br>
+<a href="https://ryanndagreat.github.io/peekaboo/">https://ryanndagreat.github.io/peekaboo/</a><br>
 
 <script>
     currentURL = new URL(window.location.href);
 
+    /*
     //CURRENTLY I WANT EVERYONE TO GO HERE
     currentURL.pathname = "/Diffusion-Illusions";
     location.replace(currentURL);
+    */
 
     redirects = { "/diffusion-illusions": "/Diffusion-Illusions" };
     lowerCasePathname = currentURL.pathname.toLowerCase();
