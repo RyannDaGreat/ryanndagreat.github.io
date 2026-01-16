@@ -1,29 +1,168 @@
-Hoi! This is an error page. 404 baby!!! Double check your url. <br><br>
+<!DOCTYPE html>
+<html>
 
-It should be ryanndagreat.github.io, or ryanndagreat.github.io/something_valid<br><br>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 - Ryan Burgert</title>
+  <link rel="stylesheet" href="styles/skeleton.css" />
+  <link rel="stylesheet" href="styles/style.css" />
+  <script src="https://kit.fontawesome.com/8590eac33c.js" crossorigin="anonymous"></script>
 
-Valid links (case sensitive!):<br>
-
-<a href="https://ryanndagreat.github.io">https://ryanndagreat.gitghub.io</a><br>
-<a href="https://ryanndagreat.github.io/LightwaveWebsite">https://ryanndagreat.github.io/LightwaveWebsite</a><br>
-<a href="https://ryanndagreat.github.io/Diffusion-Illusions">https://ryanndagreat.github.io/Diffusion-Illusions</a><br>
-<a href="https://ryanndagreat.github.io/peekaboo/">https://ryanndagreat.github.io/peekaboo/</a><br>
-
-<script>
-    currentURL = new URL(window.location.href);
-
-    /*
-    //CURRENTLY I WANT EVERYONE TO GO HERE
-    currentURL.pathname = "/Diffusion-Illusions";
-    location.replace(currentURL);
-    */
-
-    redirects = { "/diffusion-illusions": "/Diffusion-Illusions" };
-    lowerCasePathname = currentURL.pathname.toLowerCase();
-
-    if (lowerCasePathname in redirects) {
-        currentURL.pathname = redirects[lowerCasePathname];
-        alert("You made a URL typo; redirecting to " + currentURL.pathname);
-        location.replace(currentURL);
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      color: #fff;
     }
-</script>
+
+    .container-404 {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .error-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .error-header h1 {
+      font-size: 4rem;
+      margin-bottom: 10px;
+      color: #ff6b6b;
+    }
+
+    .error-header p {
+      color: #888;
+      font-size: 1rem;
+    }
+
+    .error-header a {
+      color: #5bcefa;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #888;
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+
+    .section-title {
+      color: #fff;
+      font-size: 1.5rem;
+      margin: 30px 0 20px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .project-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 18px;
+      transition: background 0.2s, border-color 0.2s;
+      text-decoration: none;
+      display: block;
+    }
+
+    .project-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .project-card h3 {
+      color: #fff;
+      font-size: 1.3rem;
+      margin: 0 0 8px 0;
+    }
+
+    .project-card .url {
+      color: #5bcefa;
+      font-size: 0.9rem;
+      margin: 0 0 8px 0;
+      word-break: break-all;
+    }
+
+    .project-card p {
+      color: #888;
+      font-size: 1rem;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .project-card .external-icon {
+      color: #666;
+      font-size: 0.75rem;
+      float: right;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-404">
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+
+    <div class="error-header">
+      <h1>404</h1>
+      <p>Page not found! Double check your URL.</p>
+      <p>Looking for <a href="https://ryanndagreat.github.io">ryanndagreat.github.io</a>?</p>
+    </div>
+
+    <h2 class="section-title">Projects & Tools</h2>
+    <div class="projects-grid" id="projects"></div>
+  </div>
+
+  <script>
+    const projects = [
+      ["MotionV2V", "https://ryanndagreat.github.io/MotionV2V/", "Consistent Video-to-Video with Motion Consistency"],
+      ["Pixel Aligner", "https://ryanndagreat.github.io/Pixel-Aligner/", "Interactive pixel art alignment tool"],
+      ["BatchPatch", "https://ryanndagreat.github.io/BatchPatch/patch_editor.html", "Patch editor for batch image processing"],
+      ["MAGICK", "https://ryanndagreat.github.io/MAGICK/", "Large-scale Captioned Dataset using Chroma Keying"],
+      ["Camera Stars", "https://ryanndagreat.github.io/camera_stars/index.html", "Interactive camera star visualization"],
+      ["Online Mesh Warped Noise", "https://ryanndagreat.github.io/webeval-reactor/src/webgl.html", "WebGL mesh warped noise generator"],
+      ["VoiceThing", "https://github.com/RyannDaGreat/voicething", "Voice processing and manipulation tool"],
+      ["CommonSource", "https://github.com/RyannDaGreat/CommonSource", "Common utilities and shared source code"],
+      ["rp", "https://github.com/RyannDaGreat/rp", "Ryan's Python utilities and tools"],
+    ];
+
+    const container = document.getElementById("projects");
+    projects.forEach(([name, url, desc]) => {
+      const isGithub = url.includes("github.com/");
+      const iconClass = isGithub ? "fab fa-github" : "fas fa-external-link-alt";
+      container.innerHTML += `
+        <a href="${url}" class="project-card" target="_blank">
+          <i class="${iconClass} external-icon"></i>
+          <h3>${name}</h3>
+          <div class="url">${url}</div>
+          <p>${desc}</p>
+        </a>`;
+    });
+
+    // URL redirects
+    const currentURL = new URL(window.location.href);
+    const redirects = { "/diffusion-illusions": "/Diffusion-Illusions" };
+    const lowerPath = currentURL.pathname.toLowerCase();
+    if (lowerPath in redirects) {
+      currentURL.pathname = redirects[lowerPath];
+      alert("You made a URL typo; redirecting to " + currentURL.pathname);
+      location.replace(currentURL);
+    }
+  </script>
+</body>
+
+</html>
