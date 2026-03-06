@@ -92,6 +92,13 @@
       margin: 0 0 8px 0;
     }
 
+    .project-card .card-logo {
+      height: 80px;
+      margin-bottom: 10px;
+      object-fit: contain;
+      display: block;
+    }
+
     .project-card .url {
       color: #5bcefa;
       font-size: 0.9rem;
@@ -136,6 +143,7 @@
       ["MAGICK", "https://ryanndagreat.github.io/MAGICK/", "Large-scale Captioned Dataset using Chroma Keying"],
       ["Camera Stars", "https://ryanndagreat.github.io/camera_stars/index.html", "Interactive camera star visualization"],
       ["Online Mesh Warped Noise", "https://ryanndagreat.github.io/webeval-reactor/src/webgl.html", "WebGL mesh warped noise generator"],
+      ["BirdsEye", "https://github.com/RyannDaGreat/BirdsEye", "Video dataset search with fuzzy text, CLIP semantic search, and histogram filtering", "assets/birdseye_logo.svg"],
       ["VoiceThing", "https://github.com/RyannDaGreat/voicething", "Voice processing and manipulation tool"],
       ["CommonSource", "https://github.com/RyannDaGreat/CommonSource", "Common utilities and shared source code"],
       ["rp", "https://github.com/RyannDaGreat/rp", "Ryan's Python utilities and tools"],
@@ -147,12 +155,14 @@
     ];
 
     const container = document.getElementById("projects");
-    projects.forEach(([name, url, desc]) => {
+    projects.forEach(([name, url, desc, logo]) => {
       const isGithub = url.includes("github.com/");
       const iconClass = isGithub ? "fab fa-github" : "fas fa-external-link-alt";
+      const logoHtml = logo ? `<img src="${logo}" alt="${name}" class="card-logo">` : "";
       container.innerHTML += `
         <a href="${url}" class="project-card" target="_blank">
           <i class="${iconClass} external-icon"></i>
+          ${logoHtml}
           <h3>${name}</h3>
           <div class="url">${url}</div>
           <p>${desc}</p>
