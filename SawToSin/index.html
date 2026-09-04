@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SawToSin — Möbius Synth</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎹</text></svg>">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --white-key-active: #34d399;
+    --black-key-active: #10b981;
+    --key-transition: 60ms;
+  }
+  .font-mono-brand { font-family: var(--font-mono); }
+  .piano-key { transition: background-color var(--key-transition), box-shadow var(--key-transition); }
+  .white-key.key-down { background-color: var(--white-key-active) !important; }
+  .black-key.key-down { background-color: var(--black-key-active) !important; }
+  input[type="range"] { accent-color: #34d399; }
+</style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen selection:bg-emerald-500/30">
+<div class="max-w-6xl mx-auto px-4 py-6 flex flex-col gap-4">
+
+  <!-- ───────────────────────── Header ───────────────────────── -->
+  <header class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+    <h1 class="font-mono-brand font-extrabold text-3xl bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">saw_to_sin</h1>
+    <p class="font-mono-brand text-sm text-slate-400">
+      sin(x) = <span class="text-emerald-400">Σ</span> μ(n)·saw(n·x)/n
+      <span class="text-slate-600 mx-1">·</span>
+      a sine wave built from Möbius-weighted sawtooths
+    </p>
+  </header>
+
+  <!-- ───────────────────────── Waveform viz ───────────────────────── -->
+  <section class="rounded-2xl bg-slate-900/70 ring-1 ring-slate-800 p-4 flex flex-col gap-3">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-4 text-xs font-mono-brand">
+        <span class="flex items-center gap-1.5"><span class="w-4 h-0.5 rounded bg-emerald-400 inline-block"></span><span id="traceLabel">saw_to_sin(x, N)</span></span>
+        <span class="flex items-center gap-1.5 text-slate-500"><span class="w-4 border-t border-dashed border-slate-500 inline-block"></span>true sin(x)</span>
+      </div>
+      <div class="font-mono-brand text-xs text-slate-400">peak amplitude: <span id="peakReadout" class="text-emerald-400">—</span></div>
+    </div>
+    <canvas id="waveCanvas" class="w-full h-52 rounded-lg bg-slate-950/60"></canvas>
+    <div class="flex items-center gap-3">
+      <span class="font-mono-brand text-[10px] uppercase tracking-widest text-slate-500 shrink-0">live output</span>
+      <canvas id="scopeCanvas" class="w-full h-14 rounded-lg bg-slate-950/60"></canvas>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Controls ───────────────────────── -->
+  <section class="grid md:grid-cols-[1fr_auto] gap-4">
+
+    <!-- N slider + μ strip -->
+    <div class="rounded-2xl bg-slate-900/70 ring-1 ring-slate-800 p-4 flex flex-col gap-3">
+      <div class="flex items-baseline justify-between">
+        <label for="nSlider" class="text-sm font-semibold">N <span class="text-slate-500 font-normal">— sawtooth terms summed</span></label>
+        <span class="font-mono-brand text-emerald-400 text-lg" id="nReadout">12</span>
+      </div>
+      <input type="range" id="nSlider" min="0" max="200" step="1" value="80" class="w-full">
+      <p class="text-xs text-slate-500">Harmonics 2…N cancel <em>exactly</em> — what's left of the buzz is only overtones above N. Slide right and listen to the saw disappear.</p>
+      <div>
+        <div class="flex items-baseline justify-between mb-1.5">
+          <span class="font-mono-brand text-[10px] uppercase tracking-widest text-slate-500">μ(n) per term</span>
+          <span class="font-mono-brand text-[10px] text-slate-500">
+            <span class="text-emerald-400">■</span> +1 &nbsp;<span class="text-rose-400">■</span> −1 &nbsp;<span class="text-slate-600">■</span> 0 (term skipped)
+          </span>
+        </div>
+        <div id="muStrip" class="flex flex-wrap gap-0.5"></div>
+      </div>
+    </div>
+
+    <!-- Mode / octave / volume -->
+    <div class="rounded-2xl bg-slate-900/70 ring-1 ring-slate-800 p-4 flex flex-col gap-4 md:w-80">
+      <div class="flex flex-col gap-1.5">
+        <span class="text-sm font-semibold">Mode</span>
+        <div class="grid grid-cols-2 rounded-lg overflow-hidden ring-1 ring-slate-700 text-sm font-mono-brand" id="modeToggle">
+          <button data-mode="synth" class="px-3 py-2 bg-emerald-500/20 text-emerald-300">saw→sin</button>
+          <button data-mode="residual" class="px-3 py-2 bg-slate-800/60 text-slate-400">− true sin(x)</button>
+        </div>
+        <p class="text-xs text-slate-500" id="modeHint">The Möbius sum itself — approaches a pure sine as N grows.</p>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-sm font-semibold">Octave</span>
+        <div class="flex items-center gap-2 font-mono-brand">
+          <button id="octDown" class="w-9 h-9 rounded-lg bg-slate-800 ring-1 ring-slate-700 hover:bg-slate-700 text-lg">−</button>
+          <span id="octReadout" class="w-16 text-center text-emerald-400">C3–C5</span>
+          <button id="octUp" class="w-9 h-9 rounded-lg bg-slate-800 ring-1 ring-slate-700 hover:bg-slate-700 text-lg">+</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-semibold shrink-0">Volume</span>
+        <input type="range" id="volSlider" min="0" max="1" step="0.01" value="0.6" class="w-full">
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Piano ───────────────────────── -->
+  <section class="rounded-2xl bg-slate-900/70 ring-1 ring-slate-800 p-4 flex flex-col gap-3">
+    <div id="piano" class="relative h-44 select-none touch-none"></div>
+    <p class="text-xs text-slate-500 font-mono-brand text-center">
+      white keys: <span class="text-slate-300">q w e r t y u i o p [ ] \</span> and <span class="text-slate-300">z x c v b n m , . /</span> (octave down)
+      &nbsp;·&nbsp; black keys above them: <span class="text-slate-300">2 3 5 6 7 9 0 =</span> and <span class="text-slate-300">s d g h j l ;</span>
+      &nbsp;·&nbsp; click or drag
+    </p>
+  </section>
+</div>
+
+<script>
+'use strict';
+
+/* ═══════════════════════════ Constants ═══════════════════════════ */
+
+const TAU = Math.PI * 2;
+const SAW_SCALE = 2 / Math.PI;   // saw(x) spans ±π/2; this scales it to ±1 for audio/display
+const MAX_N = 512;               // upper bound of the N slider
+const MAX_HARMONIC = 2048;       // Fourier table size for the PeriodicWave (browser band-limits per pitch)
+const VIZ_SAMPLES = 1024;        // points sampled across one period for the math waveform
+const VIZ_Y_RANGE = 1.6;         // fixed ±y range so amplitudes stay comparable across N and modes
+
+const ATTACK_S = 0.005;          // note envelope attack, seconds
+const RELEASE_S = 0.12;          // note envelope release, seconds
+const NOTE_GAIN = 0.4;           // per-note gain, leaves headroom for polyphony
+
+const MIDI_C_OF_OCTAVE_4 = 60;   // MIDI note number of middle C
+const A4_MIDI = 69, A4_FREQ = 440;
+
+// DAW-style layout: each letter row is the white keys (a run of the major scale),
+// and the staggered row above it holds that row's black keys, exactly like a piano.
+// The z row is one octave below the q row. Keys over the E–F / B–C gaps (4 8 -, f k)
+// stay unmapped, so black keys land where they do on a real keyboard.
+const WHITE_SEMITONES = [0, 2, 4, 5, 7, 9, 11];  // C D E F G A B
+const KEY_ROWS = [
+  { whites: 'q w e r t y u i o p [ ] \\'.split(' '), blacks: '2 3 5 6 7 9 0 ='.split(' '), transpose: 0 },
+  { whites: 'z x c v b n m , . /'.split(' '),        blacks: 's d g h j l ;'.split(' '),   transpose: -12 },
+];
+
+const BLACK_KEY_WIDTH_FRAC = 0.62;                      // black key width as a fraction of a white key
+const BLACK_SEMITONES = new Set([1, 3, 6, 8, 10]);
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+function charToCode(c) {
+  // Pure. Keyboard char → KeyboardEvent.code. charToCode('q') → 'KeyQ', charToCode('2') → 'Digit2'.
+  if (/[a-z]/.test(c)) return 'Key' + c.toUpperCase();
+  if (/[0-9]/.test(c)) return 'Digit' + c;
+  return { '[':'BracketLeft', ']':'BracketRight', '\\':'Backslash', ',':'Comma', '.':'Period', '/':'Slash', ';':'Semicolon', '=':'Equal' }[c];
+}
+
+function whiteSemitone(w) {
+  // Pure. Semitone offset of the w-th white key up from C. whiteSemitone(1) → 2, whiteSemitone(7) → 12.
+  return Math.floor(w / 7) * 12 + WHITE_SEMITONES[w % 7];
+}
+
+// Derived: code → semitone offset from the base C, and offset → keyboard chars
+// (the rows overlap by a sixth, so some notes get a key from each row, e.g. q and ,).
+const KEY_OFFSETS = new Map(), OFFSET_CHARS = new Map();
+for (const { whites, blacks, transpose } of KEY_ROWS) {
+  const pairs = whites.map((c, w) => [c, whiteSemitone(w) + transpose]);
+  let b = 0;
+  for (let w = 0; w + 1 < whites.length && b < blacks.length; w++)
+    if (whiteSemitone(w + 1) - whiteSemitone(w) === 2) pairs.push([blacks[b++], whiteSemitone(w) + 1 + transpose]);
+  for (const [c, off] of pairs) {
+    KEY_OFFSETS.set(charToCode(c), off);
+    OFFSET_CHARS.set(off, (OFFSET_CHARS.get(off) || []).concat(c));
+  }
+}
+const PIANO_LOW_OFFSET = Math.min(...OFFSET_CHARS.keys()), PIANO_HIGH_OFFSET = Math.max(...OFFSET_CHARS.keys());
+
+/* ═══════════════════════════ Math (mirrors formula.py) ═══════════════════════════ */
+
+function mobius(n) {
+  // Pure. Möbius μ(n) — `signer` from formula.py: 0 if any square divides n,
+  // else (−1)^(count of prime factors). mobius(6)=1, mobius(2)=-1, mobius(4)=0.
+  let m = n, factors = 0;
+  for (let p = 2; p * p <= m; p++) {
+    if (m % p === 0) {
+      m /= p; factors++;
+      if (m % p === 0) return 0;
+    }
+  }
+  if (m > 1) factors++;
+  return factors % 2 ? -1 : 1;
+}
+
+const MU = new Int8Array(MAX_N + 1);
+for (let i = 1; i <= MAX_N; i++) MU[i] = mobius(i);
+
+function sawWave(x) {
+  // Pure. The ideal sawtooth from formula.py: (π − x mod τ)/2, spans ±π/2.
+  return (Math.PI - (((x % TAU) + TAU) % TAU)) / 2;
+}
+
+function harmonicAmps(n, mode) {
+  // Pure. Fourier sine coefficients of the truncated sum Σ_{i≤n} μ(i)·saw(i·x)/i,
+  // scaled by SAW_SCALE. Harmonic m gets Σ_{d|m, d≤n} μ(d)/m — at n→∞ only the
+  // fundamental survives (that's the whole joke). mode 'residual' subtracts true sin(x).
+  // Returns Float32Array of length MAX_HARMONIC+1 (index = harmonic number, [0] unused).
+  const b = new Float32Array(MAX_HARMONIC + 1);
+  for (let d = 1; d <= n; d++) {
+    if (MU[d] === 0) continue;
+    for (let m = d; m <= MAX_HARMONIC; m += d) b[m] += MU[d];
+  }
+  for (let m = 1; m <= MAX_HARMONIC; m++) b[m] = b[m] * SAW_SCALE / m;
+  if (mode === 'residual') b[1] -= SAW_SCALE;
+  return b;
+}
+
+function sampleWaveform(n, mode, samples) {
+  // Pure. One period of the exact (non-band-limited) truncated sum, scaled by
+  // SAW_SCALE — keeps the true saw discontinuities the Fourier table smooths over.
+  // Returns Float32Array of length `samples` covering x ∈ [0, τ).
+  const out = new Float32Array(samples);
+  for (let s = 0; s < samples; s++) {
+    const x = (s / samples) * TAU;
+    let acc = 0;
+    for (let i = 1; i <= n; i++) if (MU[i]) acc += MU[i] / i * sawWave(x * i);
+    if (mode === 'residual') acc -= Math.sin(x);
+    out[s] = acc * SAW_SCALE;
+  }
+  return out;
+}
+
+const N_SLIDER_STEPS = 200;   // slider resolution for the exponential N mapping
+
+function sliderToN(t) {
+  // Pure. Exponential slider map — low N (where the sound changes fastest) gets
+  // most of the travel. sliderToN(0) → 1, sliderToN(100) → ~23, sliderToN(200) → 512.
+  return Math.round(Math.pow(MAX_N, t / N_SLIDER_STEPS));
+}
+
+function midiName(midi) {
+  // Pure. midiName(60) → 'C4', midiName(58) → 'A#3'.
+  return NOTE_NAMES[((midi % 12) + 12) % 12] + (Math.floor(midi / 12) - 1);
+}
+
+function midiToFreq(midi) {
+  // Pure. midiToFreq(69) → 440, midiToFreq(60) → ~261.63 (middle C).
+  return A4_FREQ * Math.pow(2, (midi - A4_MIDI) / 12);
+}
+
+/* ═══════════════════════════ State ═══════════════════════════ */
+
+const state = { n: 12, mode: 'synth', baseOctave: 4, volume: 0.6 };
+
+/* ═══════════════════════════ Audio engine ═══════════════════════════ */
+
+let ctx = null, masterGain = null, analyser = null, currentWave = null;
+const activeNotes = new Map();   // midi → {osc, gain}
+const codeToMidi = new Map();    // held physical key code → midi it triggered
+
+function ensureAudio() {
+  // Command. Lazily creates the AudioContext graph (must follow a user gesture).
+  if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; }
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = ctx.createGain();
+  masterGain.gain.value = state.volume;
+  const compressor = ctx.createDynamicsCompressor();
+  analyser = ctx.createAnalyser();
+  analyser.fftSize = 2048;
+  masterGain.connect(compressor).connect(analyser).connect(ctx.destination);
+  rebuildWave();
+}
+
+function rebuildWave() {
+  // Command. Rebuilds the PeriodicWave from state.n/state.mode and hot-swaps it
+  // into every sounding oscillator.
+  if (!ctx) return;
+  const amps = harmonicAmps(state.n, state.mode);
+  currentWave = ctx.createPeriodicWave(new Float32Array(amps.length), amps, { disableNormalization: true });
+  for (const { osc } of activeNotes.values()) osc.setPeriodicWave(currentWave);
+}
+
+function noteOn(midi) {
+  // Command. Starts an oscillator for `midi` (no-op if already sounding).
+  ensureAudio();
+  if (activeNotes.has(midi)) return;
+  const osc = ctx.createOscillator();
+  osc.setPeriodicWave(currentWave);
+  osc.frequency.value = midiToFreq(midi);
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(NOTE_GAIN, ctx.currentTime + ATTACK_S);
+  osc.connect(gain).connect(masterGain);
+  osc.start();
+  activeNotes.set(midi, { osc, gain });
+  setKeyDown(midi, true);
+}
+
+function noteOff(midi) {
+  // Command. Releases the oscillator for `midi` with a short fade-out.
+  const note = activeNotes.get(midi);
+  if (!note) return;
+  activeNotes.delete(midi);
+  const t = ctx.currentTime;
+  note.gain.gain.cancelScheduledValues(t);
+  note.gain.gain.setValueAtTime(note.gain.gain.value, t);
+  note.gain.gain.linearRampToValueAtTime(0, t + RELEASE_S);
+  note.osc.stop(t + RELEASE_S);
+  setKeyDown(midi, false);
+}
+
+/* ═══════════════════════════ Waveform canvases ═══════════════════════════ */
+
+function fitCanvas(canvas) {
+  // Command (reads layout, mutates canvas buffer). Matches the bitmap to CSS size × DPR.
+  // Returns the 2D context scaled so 1 unit = 1 CSS px.
+  const dpr = window.devicePixelRatio || 1;
+  const { clientWidth: w, clientHeight: h } = canvas;
+  if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; }
+  const g = canvas.getContext('2d');
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return g;
+}
+
+function tracePath(g, values, w, h, yRange) {
+  // Near-pure (draws onto g). Plots `values` (one period) across width w, ±yRange → height h.
+  g.beginPath();
+  for (let i = 0; i < values.length; i++) {
+    const x = (i / (values.length - 1)) * w;
+    const y = h / 2 - (values[i] / yRange) * (h / 2);
+    i ? g.lineTo(x, y) : g.moveTo(x, y);
+  }
+}
+
+function drawMathWave() {
+  // Command. Renders the formula waveform + true-sine overlay onto #waveCanvas.
+  const canvas = document.getElementById('waveCanvas');
+  const g = fitCanvas(canvas);
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  g.clearRect(0, 0, w, h);
+
+  g.strokeStyle = 'rgba(148,163,184,0.15)';
+  g.beginPath(); g.moveTo(0, h / 2); g.lineTo(w, h / 2); g.stroke();
+
+  const sine = new Float32Array(VIZ_SAMPLES);
+  for (let i = 0; i < VIZ_SAMPLES; i++) sine[i] = SAW_SCALE * Math.sin((i / VIZ_SAMPLES) * TAU);
+  g.setLineDash([4, 4]);
+  g.strokeStyle = 'rgba(100,116,139,0.6)';
+  g.lineWidth = 1;
+  tracePath(g, sine, w, h, VIZ_Y_RANGE); g.stroke();
+  g.setLineDash([]);
+
+  const wave = sampleWaveform(state.n, state.mode, VIZ_SAMPLES);
+  const grad = g.createLinearGradient(0, 0, w, 0);
+  if (state.mode === 'synth') { grad.addColorStop(0, '#34d399'); grad.addColorStop(1, '#22d3ee'); }
+  else                        { grad.addColorStop(0, '#fb7185'); grad.addColorStop(1, '#fbbf24'); }
+  g.strokeStyle = grad;
+  g.lineWidth = 2;
+  g.shadowColor = state.mode === 'synth' ? 'rgba(52,211,153,0.5)' : 'rgba(251,113,133,0.5)';
+  g.shadowBlur = 8;
+  tracePath(g, wave, w, h, VIZ_Y_RANGE); g.stroke();
+  g.shadowBlur = 0;
+
+  let peak = 0;
+  for (const v of wave) peak = Math.max(peak, Math.abs(v));
+  document.getElementById('peakReadout').textContent = peak.toFixed(3);
+}
+
+function drawScope() {
+  // Command. rAF loop — live oscilloscope of the master output, zero-crossing triggered.
+  const canvas = document.getElementById('scopeCanvas');
+  const g = fitCanvas(canvas);
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  g.clearRect(0, 0, w, h);
+  g.strokeStyle = 'rgba(148,163,184,0.15)';
+  g.beginPath(); g.moveTo(0, h / 2); g.lineTo(w, h / 2); g.stroke();
+
+  if (analyser) {
+    const buf = new Float32Array(analyser.fftSize);
+    analyser.getFloatTimeDomainData(buf);
+    let start = 0;
+    for (let i = 1; i < buf.length / 2; i++) if (buf[i - 1] <= 0 && buf[i] > 0) { start = i; break; }
+    const view = buf.subarray(start, start + Math.floor(buf.length / 2));
+    g.strokeStyle = '#22d3ee';
+    g.lineWidth = 1.5;
+    tracePath(g, view, w, h, 1.0); g.stroke();
+  }
+  requestAnimationFrame(drawScope);
+}
+
+/* ═══════════════════════════ μ strip ═══════════════════════════ */
+
+function drawMuStrip() {
+  // Command. Renders one square per term i=1..N colored by μ(i).
+  const cells = [];
+  for (let i = 1; i <= state.n; i++) {
+    const color = MU[i] > 0 ? 'bg-emerald-400' : MU[i] < 0 ? 'bg-rose-400' : 'bg-slate-700';
+    cells.push(`<span class="w-2 h-2 rounded-[2px] ${color}" title="μ(${i}) = ${MU[i]}"></span>`);
+  }
+  document.getElementById('muStrip').innerHTML = cells.join('');
+}
+
+/* ═══════════════════════════ Piano UI ═══════════════════════════ */
+
+function baseMidi() {
+  // Query (reads state). MIDI note of the base C — where the q key lands.
+  return MIDI_C_OF_OCTAVE_4 + (state.baseOctave - 4) * 12;
+}
+
+function buildPiano() {
+  // Command. Rebuilds the on-screen keyboard for the current octave.
+  const piano = document.getElementById('piano');
+  const whites = [], blacks = [];
+  let whiteIndex = 0;
+  for (let off = PIANO_LOW_OFFSET; off <= PIANO_HIGH_OFFSET; off++) {
+    const midi = baseMidi() + off;
+    const semitone = ((midi % 12) + 12) % 12;
+    const charText = (OFFSET_CHARS.get(off) || []).join(' ').replace('\\', '&#92;');
+    const charLabel = charText ? `<span class="font-mono-brand text-xs ${BLACK_SEMITONES.has(semitone) ? 'text-slate-300' : 'text-slate-500'}">${charText}</span>` : '';
+    if (BLACK_SEMITONES.has(semitone)) {
+      blacks.push({ midi, whiteIndex, charLabel });
+    } else {
+      const noteLabel = semitone === 0 ? `<span class="text-[10px] text-slate-400 font-mono-brand">${midiName(midi)}</span>` : '';
+      whites.push({ midi, charLabel, noteLabel });
+      whiteIndex++;
+    }
+  }
+  const whiteW = 100 / whites.length;
+  const blackW = whiteW * BLACK_KEY_WIDTH_FRAC;
+  piano.innerHTML = `
+    <div class="absolute inset-0 flex gap-px">
+      ${whites.map(k => `
+        <button data-midi="${k.midi}" class="piano-key white-key flex-1 rounded-b-md bg-slate-100 hover:bg-slate-200 flex flex-col justify-end items-center gap-1 pb-2 cursor-pointer">
+          ${k.noteLabel}${k.charLabel}
+        </button>`).join('')}
+    </div>
+    ${blacks.map(k => `
+      <button data-midi="${k.midi}" style="left:${(k.whiteIndex * whiteW - blackW / 2).toFixed(3)}%;width:${blackW.toFixed(3)}%"
+        class="piano-key black-key absolute top-0 h-[58%] rounded-b-md bg-slate-900 ring-1 ring-slate-700 hover:bg-slate-800 flex flex-col justify-end items-center pb-1.5 cursor-pointer z-10">
+        ${k.charLabel}
+      </button>`).join('')}`;
+}
+
+function setKeyDown(midi, down) {
+  // Command. Toggles the pressed highlight on the on-screen key for `midi`.
+  const key = document.querySelector(`[data-midi="${midi}"]`);
+  if (key) key.classList.toggle('key-down', down);
+}
+
+/* ═══════════════════════════ Input wiring ═══════════════════════════ */
+
+function codeToOffset(code) {
+  // Pure (reads const map). KeyboardEvent.code → semitone offset from the base C, or null.
+  // codeToOffset('KeyQ') → 0, codeToOffset('KeyZ') → −12, codeToOffset('Digit2') → 1.
+  return KEY_OFFSETS.get(code) ?? null;
+}
+
+window.addEventListener('keydown', e => {
+  // The piano eats note keys unconditionally — focus (sliders, buttons) never blocks playing.
+  if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+  const offset = codeToOffset(e.code);
+  if (offset === null) return;
+  e.preventDefault();
+  const midi = baseMidi() + offset;
+  codeToMidi.set(e.code, midi);
+  noteOn(midi);
+});
+
+window.addEventListener('keyup', e => {
+  const midi = codeToMidi.get(e.code);
+  if (midi === undefined) return;
+  codeToMidi.delete(e.code);
+  noteOff(midi);
+});
+
+window.addEventListener('blur', () => {
+  for (const midi of [...activeNotes.keys()]) noteOff(midi);
+  codeToMidi.clear();
+});
+
+const pianoEl = document.getElementById('piano');
+let pointerNote = null;
+function pianoMidiFromEvent(e) {
+  // Query (reads DOM). The MIDI note of the piano key under the pointer, or null.
+  const key = document.elementFromPoint(e.clientX, e.clientY)?.closest('[data-midi]');
+  return key ? Number(key.dataset.midi) : null;
+}
+pianoEl.addEventListener('pointerdown', e => {
+  pianoEl.setPointerCapture(e.pointerId);
+  const midi = pianoMidiFromEvent(e);
+  if (midi === null) return;
+  pointerNote = midi;
+  noteOn(midi);
+});
+pianoEl.addEventListener('pointermove', e => {
+  if (pointerNote === null) return;
+  const midi = pianoMidiFromEvent(e);
+  if (midi === pointerNote) return;
+  noteOff(pointerNote);
+  pointerNote = midi;
+  if (midi !== null) noteOn(midi);
+});
+const endPointer = () => { if (pointerNote !== null) { noteOff(pointerNote); pointerNote = null; } };
+pianoEl.addEventListener('pointerup', endPointer);
+pianoEl.addEventListener('pointercancel', endPointer);
+
+/* ═══════════════════════════ Control wiring ═══════════════════════════ */
+
+function refreshFormula() {
+  // Command. Re-renders everything that depends on N or mode.
+  document.getElementById('nReadout').textContent = state.n;
+  document.getElementById('traceLabel').textContent =
+    state.mode === 'synth' ? `saw_to_sin(x, N=${state.n})` : `saw_to_sin(x, N=${state.n}) − sin(x)`;
+  drawMathWave();
+  drawMuStrip();
+  rebuildWave();
+}
+
+document.getElementById('nSlider').addEventListener('input', e => {
+  state.n = sliderToN(Number(e.target.value));
+  refreshFormula();
+});
+
+document.getElementById('modeToggle').addEventListener('click', e => {
+  const btn = e.target.closest('[data-mode]');
+  if (!btn) return;
+  btn.blur();   // keep Enter/Space from re-firing the button while playing
+  state.mode = btn.dataset.mode;
+  for (const b of document.querySelectorAll('#modeToggle [data-mode]')) {
+    const on = b.dataset.mode === state.mode;
+    b.className = `px-3 py-2 ${on ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800/60 text-slate-400'}`;
+  }
+  document.getElementById('modeHint').textContent = state.mode === 'synth'
+    ? 'The Möbius sum itself — approaches a pure sine as N grows.'
+    : 'The error term: what remains after subtracting a perfect sine. Fades to silence as N grows.';
+  refreshFormula();
+});
+
+function setOctave(delta) {
+  // Command. Shifts the base octave and rebuilds the piano.
+  state.baseOctave += delta;
+  document.getElementById('octReadout').textContent =
+    `${midiName(baseMidi() + PIANO_LOW_OFFSET)}–${midiName(baseMidi() + PIANO_HIGH_OFFSET)}`;
+  buildPiano();
+}
+document.getElementById('octDown').addEventListener('click', e => { e.currentTarget.blur(); setOctave(-1); });
+document.getElementById('octUp').addEventListener('click', e => { e.currentTarget.blur(); setOctave(1); });
+
+document.getElementById('volSlider').addEventListener('input', e => {
+  state.volume = Number(e.target.value);
+  if (masterGain) masterGain.gain.setTargetAtTime(state.volume, ctx.currentTime, 0.02);
+});
+
+window.addEventListener('resize', drawMathWave);
+
+/* ═══════════════════════════ Init ═══════════════════════════ */
+
+setOctave(0);
+refreshFormula();
+requestAnimationFrame(drawScope);
+</script>
+</body>
+</html>
